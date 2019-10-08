@@ -13,13 +13,14 @@ Item {
             contentHeight: text.height
             contentWidth: -1
             clip: true
-            Text {
+            TextEdit {
                 id: text
                 text: paths
                 width: parent.width * 0.75
                 wrapMode: Text.Wrap
                 font.pixelSize: 14
-
+                readOnly: true
+                selectByMouse: true
             }
         }
 

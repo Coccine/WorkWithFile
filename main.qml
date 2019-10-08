@@ -54,7 +54,26 @@ Window {
             font.pixelSize: 16
             horizontalAlignment: TextField.AlignHCenter
         }
-
+        TextField {
+            height: 30
+            width: parent.width
+            placeholderText: "Маска модификации файла"
+            horizontalAlignment: TextField.AlignHCenter
+            font.pixelSize: 16
+            maximumLength: 16
+        }
+        TextField {
+            id: reloadTime
+            height: 30
+            width: parent.width
+            font.pixelSize: 16
+            placeholderText: "Переодичность опроса(сек)"
+            horizontalAlignment: TextField.AlignHCenter
+            validator: IntValidator {
+                bottom: 0
+                top: 999
+            }
+        }
         Text {
             text: qsTr("Входные файлы:")
             font.pixelSize: 20
@@ -85,65 +104,15 @@ Window {
         Separator {
             width: parent.width
         }
-        Row {
-            height: 50
-            width: parent.width
-            Switch {
-                height: parent.height
-                width: parent.width * 0.35
-                text: "По таймеру"
-            }
-            TextField {
-                id: reloadTime
-                height: parent.height
-                width: parent.width * 0.4
-                placeholderText: "Переодичность опроса(сек)"
-                horizontalAlignment: TextField.AlignHCenter
-                validator: IntValidator {
-                    bottom: 0
-                    top: 100
-                }
-            }
-            Button {
-                text: "Save"
-                height: parent.height
-                width: parent.width * 0.25
-                onClicked: {
-                    reloadTime.text = ""
-                }
-            }
-        }
-        Separator {
-            width: parent.width
-        }
 
-        TextField {
-            height: 30
-            width: parent.width
-            placeholderText: "Маска модификации файла"
-            horizontalAlignment: TextField.AlignHCenter
-            font.pixelSize: 16
+        Switch {
+            height: 40
+            text: "Удалить входные файлы"
         }
-        Separator {
-            width: parent.width
-            height: 4
-            _color: "blue"
-        }
-
-        Row {
+        Switch {
             height: 40
             width: parent.width
-            CheckBox {
-                height: parent.height
-                width: parent.width * 0.45
-                text: "Удалить входные файлы"
-            }
-            Button {
-                height: parent.height
-                width: parent.width * 0.55
-                text: "Продолжить"
-                font.pixelSize: 20
-            }
+            text: "По таймеру"
         }
     }
 }
