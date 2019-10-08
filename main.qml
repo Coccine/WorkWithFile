@@ -20,15 +20,15 @@ Window {
         title: "Выберите директорию для сохранения"
         onAccepted: dirComp.paths = folder.toString()
     }
-    FileDialog {
-        id: saveFiles
-        title: "Сохранение"
-        fileMode: FileDialog.SaveFile
-        //currentFiles:
-    }
 
     Timer {
         id: timer
+        repeat: true
+        onTriggered: {
+            filei.openAndModification(choiceFiles.files, modeMask,
+                                      switchRemove.position,
+                                      savedDirectory.folder.toString())
+        }
     }
 
     Column {
@@ -58,9 +58,10 @@ Window {
             width: parent.width
         }
         TextField {
+            id: modeMask
             height: 30
             width: parent.width
-            placeholderText: "Маска модификации файла"
+            placeholderText: "Введите маску модификации файла"
             horizontalAlignment: TextField.AlignHCenter
             font.pixelSize: 16
             maximumLength: 16
@@ -72,8 +73,8 @@ Window {
             id: reloadTime
             height: 30
             width: parent.width
-            font.pixelSize: 16
-            placeholderText: "Переодичность опроса(сек)"
+            font.pixelSize: 14
+            placeholderText: "Периодичность опроса наличия входного файла(сек)"
             horizontalAlignment: TextField.AlignHCenter
             validator: IntValidator {
                 bottom: 0
@@ -125,15 +126,43 @@ Window {
         }
 
         Switch {
+            id: switchRemove
             height: 40
             text: "Удалить входные файлы"
         }
-        Switch {
+
+        Row {
             height: 40
             width: parent.width
-            text: "По таймеру"
+            Switch {
+                height: parent.height
+                width: parent.width * 0.35
+                text: "По таймеру"
+                onPositionChanged: startBtn.visible = !startBtn.visible
+            }
+            SpinBox {
+                id: timerInterval
+                height: parent.height
+                width: parent.width * 0.35
+                from: 1
+            }
+            Button {
+                height: parent.height
+                width: parent.width * 0.3
+                text: "Ок"
+                onClicked: {
+                    timer.interval = timerInterval.value * 1000
+                    timer.start()
+                }
+            }
         }
+        Separator {
+            _color: "green"
+            height: 2
+        }
+
         Button {
+            id: startBtn
             width: parent.width
             height: 30
             Text {
@@ -142,6 +171,14 @@ Window {
                 color: "green"
                 font.pixelSize: 20
             }
+            onClicked: {
+                filei.openAndModification(choiceFiles.files, modeMask,
+                                          switchRemove.position,
+                                          savedDirectory.folder.toString())
+            }
         }
+    }
+    Connections {
+        target: filei
     }
 }
