@@ -2,6 +2,7 @@
 #include <random>
 #include <QDebug>
 #include <QFileInfo>
+#include <QDataStream>
 
 
 WorkWithFile::WorkWithFile(QObject* parent) : QObject(parent)
@@ -14,39 +15,50 @@ void WorkWithFile::openAndModification(QList<QUrl> filePaths, QString mask, bool
     srand(static_cast<unsigned>(time(nullptr)));
     for(auto i = 0 ; i < filePaths.count(); i++){
         file.setFileName(filePaths.at(i).toLocalFile());
-        if(file.open(QIODevice::ReadOnly | QFile::Text))
+        if(file.open(QIODevice::ReadOnly))
         {
             QFileInfo fileInfo(file.fileName());
             QString fileName(fileInfo.fileName());
-            QString data = file.readAll();
-            if(isRemove){
-                file.remove();
+            QByteArray data;
+            quint64 mask64 = mask.toULongLong(nullptr,16);
+            QString path(dir.toLocalFile() + "/" + fileName);
+            sFile.setFileName(path);
+            sFile.open(QIODevice::WriteOnly);
+            QDataStream out(&sFile);
+            while(!file.atEnd()){
+                QByteArray buff = file.read(8);
+                qDebug() << buff;
+                out << QByteArray::number(*(quint64*)buff.data()^mask64);
             }
+
             file.close();
-            QString dataTmp;
-            for(int i = 0; i < data.size(); i++){
-                dataTmp += QChar(data.at(i).unicode() ^ mask.at(rand() % mask.count()).unicode());
-            }
-            saveFiles(dir, fileName, dataTmp);
+            sFile.close();
+            if(isRemove)
+                file.remove();
+
         }
         else{
-            //qDebug() << "Не удалось открыть файл";
+            qDebug() << "Не удалось открыть файл";
          }
     }
 }
 
-void WorkWithFile::saveFiles(QUrl dir, QString filePath, QString data)
+void WorkWithFile::saveFiles(QUrl dir, QString filePath, QByteArray &data)
 {
-    QString path(dir.toLocalFile() + "/" + filePath);
+    /*QString path(dir.toLocalFile() + "/" + filePath);
     sFile.setFileName(path);
-    if(sFile.open(QIODevice::WriteOnly | QFile::Text)){
-        sFile.write(data.toUtf8());
-        sFile.close();
-    }
+    sFile.open(QIODevice::WriteOnly);
+    QDataStream out(&sFile);
+    out.append(*(quint64*)data()^mask)*/
 
 }
-bool WorkWithFile::fileExists(QString path) {
-    QFileInfo checkFile(path);
-    // check if file exists and if yes: Is it really a file and no directory?
-    return checkFile.exists() && checkFile.isFile();
+bool WorkWithFile::fileExists(QList<QUrl> paths) {
+    for(int i = 0; i < paths.count(); i++){
+        qDebug() << i << " " << paths.at(i).toLocalFile();
+        QFileInfo checkFile(paths.at(i).toLocalFile());
+        if(!checkFile.exists())
+            return false;
+    }
+
+    return true;
 }

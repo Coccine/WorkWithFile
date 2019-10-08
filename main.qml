@@ -25,9 +25,18 @@ Window {
         id: timer
         repeat: true
         onTriggered: {
-            filei.openAndModification(choiceFiles.files, modeMask,
+            filei.openAndModification(choiceFiles.files, modeMask.text,
                                       switchRemove.position,
                                       savedDirectory.folder.toString())
+        }
+    }
+    Timer {
+        id: timerChecker
+        running: reloadTime.text != "" && fileComp.paths != "" ? true : false
+        repeat: true
+        interval: parseInt(reloadTime.text) * 1000
+        onTriggered: {
+            filei.fileExists(choiceFiles.files)
         }
     }
 
@@ -61,10 +70,13 @@ Window {
             id: modeMask
             height: 30
             width: parent.width
-            placeholderText: "Введите маску модификации файла"
+            placeholderText: "Введите маску модификации файла(HEX)"
             horizontalAlignment: TextField.AlignHCenter
             font.pixelSize: 16
             maximumLength: 16
+            validator: RegExpValidator {
+                regExp: /[0-9A-F]+/
+            }
         }
         Separator {
             width: parent.width
@@ -136,20 +148,22 @@ Window {
             width: parent.width
             Switch {
                 height: parent.height
-                width: parent.width * 0.35
-                text: "По таймеру"
+                width: parent.width * 0.4
+                text: "По таймеру(ceк)"
                 onPositionChanged: startBtn.visible = !startBtn.visible
             }
             SpinBox {
                 id: timerInterval
                 height: parent.height
-                width: parent.width * 0.35
+                width: parent.width * 0.3
                 from: 1
+                visible: !startBtn.visible
             }
             Button {
                 height: parent.height
                 width: parent.width * 0.3
                 text: "Ок"
+                visible: !startBtn.visible
                 onClicked: {
                     timer.interval = timerInterval.value * 1000
                     timer.start()
@@ -172,7 +186,7 @@ Window {
                 font.pixelSize: 20
             }
             onClicked: {
-                filei.openAndModification(choiceFiles.files, modeMask,
+                filei.openAndModification(choiceFiles.files, modeMask.text,
                                           switchRemove.position,
                                           savedDirectory.folder.toString())
             }
