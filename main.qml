@@ -54,6 +54,9 @@ Window {
             font.pixelSize: 16
             horizontalAlignment: TextField.AlignHCenter
         }
+        Separator {
+            width: parent.width
+        }
         TextField {
             height: 30
             width: parent.width
@@ -61,6 +64,9 @@ Window {
             horizontalAlignment: TextField.AlignHCenter
             font.pixelSize: 16
             maximumLength: 16
+        }
+        Separator {
+            width: parent.width
         }
         TextField {
             id: reloadTime
@@ -74,11 +80,19 @@ Window {
                 top: 999
             }
         }
+        Separator {
+            width: parent.width
+        }
         Text {
             text: qsTr("Входные файлы:")
             font.pixelSize: 20
             horizontalAlignment: Text.horizontalCenter
             color: "lightblue"
+        }
+        Separator {
+            width: parent.width
+            height: 1
+            _color: "lightblue"
         }
         PathComponent {
             id: fileComp
@@ -94,6 +108,11 @@ Window {
             font.pixelSize: 20
             horizontalAlignment: Text.horizontalCenter
             color: "lightblue"
+        }
+        Separator {
+            width: parent.width
+            height: 1
+            _color: "lightblue"
         }
         PathComponent {
             id: dirComp
@@ -113,6 +132,16 @@ Window {
             height: 40
             width: parent.width
             text: "По таймеру"
+        }
+        Button {
+            width: parent.width
+            height: 30
+            Text {
+                anchors.centerIn: parent
+                text: qsTr("Начать")
+                color: "green"
+                font.pixelSize: 20
+            }
         }
     }
 }
