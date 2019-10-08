@@ -8,7 +8,6 @@ Window {
     width: 400
     height: 480
     title: qsTr("Help")
-
     FileDialog {
         id: choiceFiles
         title: "Выберите файлы"
@@ -23,10 +22,30 @@ Window {
     }
     FileDialog {
         id: saveFiles
+        title: "Сохранение"
+        fileMode: FileDialog.SaveFile
+        //currentFiles:
+    }
+
+    Timer {
+        id: timer
     }
 
     Column {
         anchors.fill: parent
+        ToolBar {
+            ToolButton {
+                text: "Справка"
+                onClicked: programMenu.open()
+            }
+
+            Menu {
+                id: programMenu
+                MenuItem {
+                    text: "О программе"
+                }
+            }
+        }
         TextField {
             id: filter
             placeholderText: "Введите маску файлов"
@@ -75,14 +94,23 @@ Window {
                 text: "По таймеру"
             }
             TextField {
+                id: reloadTime
                 height: parent.height
-                width: parent.width * 0.5
-                placeholderText: "Переодичность опроса наличия"
+                width: parent.width * 0.4
+                placeholderText: "Переодичность опроса(сек)"
+                horizontalAlignment: TextField.AlignHCenter
+                validator: IntValidator {
+                    bottom: 0
+                    top: 100
+                }
             }
             Button {
                 text: "Save"
                 height: parent.height
-                width: parent.width * 0.15
+                width: parent.width * 0.25
+                onClicked: {
+                    reloadTime.text = ""
+                }
             }
         }
         Separator {
@@ -95,6 +123,27 @@ Window {
             placeholderText: "Маска модификации файла"
             horizontalAlignment: TextField.AlignHCenter
             font.pixelSize: 16
+        }
+        Separator {
+            width: parent.width
+            height: 4
+            _color: "blue"
+        }
+
+        Row {
+            height: 40
+            width: parent.width
+            CheckBox {
+                height: parent.height
+                width: parent.width * 0.45
+                text: "Удалить входные файлы"
+            }
+            Button {
+                height: parent.height
+                width: parent.width * 0.55
+                text: "Продолжить"
+                font.pixelSize: 20
+            }
         }
     }
 }
